@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>はるまさんの恋の作戦会議</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+/* 一つの世界で通す単一テーマ。淡いピンクの紙に、8-bitのハートと雲。1カラム・スマホ幅、文字は全部ドット書体。 */
+:root{
+  color-scheme: light;
+  --bg:#fff4f7;        /* すごく淡いピンク */
+  --paper:#ffffff;
+  --blush:#fbd9e4;     /* 面の塗り */
+  --rose:#c2477a;      /* 主役の色・ボタン */
+  --rose-deep:#93305a;
+  --lav:#b7a6e3;       /* 影・補助 */
+  --gold:#d9a531;      /* キラキラ */
+  --ink:#57303f;       /* 文字 */
+  --ink-soft:#8a6373;
+  --font:"DotGothic16","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,monospace;
+  --px:3px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.75;
+  -webkit-text-size-adjust:100%;
+  background-image:
+    radial-gradient(var(--blush) 1.5px, transparent 1.5px);
+  background-size:18px 18px;
+}
+button,input,textarea{font:inherit;color:inherit}
+#app{
+  max-width:440px;margin:0 auto;min-height:100%;
+  padding:18px 16px 40px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.steps{display:flex;gap:6px;align-items:center}
+.steps svg{width:20px;height:auto;opacity:.28}
+.steps svg.on{opacity:1}
+.count{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-soft)}
+.count svg{width:18px;height:auto}
+
+.box{
+  background:var(--paper);
+  border:var(--px) solid var(--ink);
+  box-shadow:var(--px) var(--px) 0 var(--lav);
+  padding:16px;
+}
+.label{font-size:13px;color:var(--rose);letter-spacing:.08em}
+h1{font-size:26px;line-height:1.4;font-weight:400;text-wrap:balance}
+h2{font-size:19px;line-height:1.5;font-weight:400;text-wrap:balance}
+.sub{color:var(--ink-soft);font-size:14px}
+
+/* コーチの吹き出し */
+.coach{display:flex;gap:10px;align-items:flex-start}
+.coach .av{flex:none;width:44px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.coach .av svg{width:38px;height:auto}
+.coach .av span{font-size:11px;color:var(--rose)}
+.coach .say{
+  flex:1;background:var(--blush);
+  border:var(--px) solid var(--ink);
+  padding:10px 12px;font-size:15px;
+}
+.card{
+  text-align:center;font-size:19px;line-height:1.6;
+  padding:26px 14px;min-height:120px;
+  display:flex;align-items:center;justify-content:center;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.btn{
+  min-height:50px;padding:10px 12px;cursor:pointer;
+  background:var(--paper);
+  border:var(--px) solid var(--ink);
+  box-shadow:var(--px) var(--px) 0 var(--lav);
+  text-align:center;line-height:1.5;
+}
+.btn.left{text-align:left}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--lav)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn.main{background:var(--rose);color:#fff;border-color:var(--rose-deep);box-shadow:var(--px) var(--px) 0 var(--rose-deep);font-size:17px}
+.btn.miss{opacity:.45;box-shadow:none;cursor:default}
+.btn.hit{background:var(--blush);border-color:var(--rose)}
+.btn small{display:block;font-size:12px;color:var(--ink-soft)}
+.before{font-size:14px;color:var(--ink-soft);border-left:var(--px) solid var(--lav);padding-left:10px}
+.line{font-size:17px;min-height:3.4em}
+.line .gap{color:var(--lav)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  min-height:38px;padding:4px 10px;font-size:14px;cursor:pointer;
+  background:var(--bg);border:2px solid var(--lav);
+}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;color:var(--rose)}
+.field input{
+  width:100%;min-height:48px;padding:8px 10px;
+  background:var(--bg);border:var(--px) solid var(--ink);border-radius:0;
+}
+.memo{list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.memo li{display:flex;gap:8px;align-items:flex-start}
+.memo svg{flex:none;width:16px;height:auto;margin-top:6px}
+.center{text-align:center}
+.hero{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 16px}
+.hero .big{width:96px;height:auto}
+.sky{display:flex;justify-content:space-between;align-items:flex-end}
+.sky svg{width:72px;height:auto}
+.sky svg:last-child{width:52px}
+.foot{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:auto}
+.pop{animation:pop .25s steps(3)}
+@keyframes pop{from{transform:translateY(6px)}to{transform:none}}
+.bob{animation:bob 1.6s steps(2) infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.pop,.bob{animation:none}}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- ドット絵 ---------- */
+var PAL={O:"#93305a",P:"#f29ab8",W:"#ffffff",L:"#b7a6e3",R:"#e0679a",G:"#d9a531",C:"#ffffff",B:"#b7a6e3"};
+var HEART=[
+ ".OO...OO.",
+ "OPPO.OPPO",
+ "OPWPOPPRO",
+ "OPPPPPPRO",
+ ".OPPPPRO.",
+ "..OPPRO..",
+ "...ORO...",
+ "....O...."];
+var CLOUD=[
+ "....BBB.....",
+ "..BBCCCBB...",
+ ".BCCCCCCCBB.",
+ "BCCCCCCCCCCB",
+ "BCCCCCCCCCCB",
+ ".BBBBBBBBBB."];
+var SPARK=[
+ "..G..",
+ "..G..",
+ "GGWGG",
+ "..G..",
+ "..G.."];
+function px(map,cls){
+  var w=map[0].length,h=map.length,s='<svg viewBox="0 0 '+w+' '+h+'" shape-rendering="crispEdges" aria-hidden="true"'+(cls?' class="'+cls+'"':'')+'>';
+  for(var y=0;y<h;y++)for(var x=0;x<w;x++){
+    var c=map[y].charAt(x);
+    if(c!==".")s+='<rect x="'+x+'" y="'+y+'" width="1.02" height="1.02" fill="'+PAL[c]+'"/>';
+  }
+  return s+"</svg>";
+}
+
+/* ---------- 素材 ---------- */
+var CATS=[
+  {id:"fact",   name:"起きたこと",     note:"確認できる"},
+  {id:"read",   name:"わたしの解釈",   note:"そう考えた"},
+  {id:"maybe",  name:"別の可能性",     note:"これも未確認"},
+  {id:"feel",   name:"わたしの気持ち", note:"そう感じた"}
+];
+var RETRY={
+  fact:"もう一回。これ、スクショに写るかどうかで考えてみて。",
+  read:"惜しい。それ、相手に確かめたことあったっけ。",
+  maybe:"もう一回。本当かどうか、まだ誰も知らない話だよ。",
+  feel:"もう一回。これは相手の話じゃなくて、あなたの内側の話。"
+};
+var SORT=[
+  {t:"LINEを送って3時間、返信が来ていない", a:"fact",  ok:"時計とトーク画面が証人。ここまでは誰が見ても同じ。"},
+  {t:"嫌われたから返信がない",             a:"read",  ok:"これは頭の中でついた字幕。裏づけは、まだどこにもない。"},
+  {t:"仕事中で、スマホを見ていないのかも", a:"maybe", ok:"ありえる話。ただ、都合のいい仮説もまだ確定じゃないんだよね。"},
+  {t:"返事がなくて、寂しかった",           a:"feel",  ok:"これは正真正銘あなたのもの。証拠がなくても、なかったことにしなくていい。"},
+  {t:"返事が翌日になった",                 a:"fact",  ok:"日付が変わった。確かなのは、そこまで。"},
+  {t:"私を大切にしていない",               a:"read",  ok:"相手の気持ちは、本人に聞くまでは全部「推定」。"},
+  {t:"返信の内容を考えているのかも",       a:"maybe", ok:"これも可能性のひとつ。候補が増えると、決めつけは少し緩む。"},
+  {t:"今月、会えたのは1回",                a:"fact",  ok:"カレンダーが数えてくれるものは、起きたこと。"}
+];
+var BUILD=[
+  {title:"返信のこと",
+   before:"なんでいつも返信くれないの？ 私のこと大事じゃないんでしょ",
+   slots:[
+    {name:"何があった？", opts:[
+      {t:"昨日の返信が翌日になって、", ok:1},
+      {t:"いつも返信くれなくて、", why:"「いつも」まで広げると、相手は反論の準備を始めちゃう。昨日の話だけで十分。"},
+      {t:"私のこと大事じゃないみたいで、", why:"それは相手の気持ちの推定。まずは起きたことだけ。"}]},
+    {name:"どう感じた？", opts:[
+      {t:"ちょっと寂しかった。", ok:1},
+      {t:"冷たい人だなと思った。", why:"それは相手への評価。あなたの気持ちは、どこにいる？"},
+      {t:"もういいやって思った。", why:"強がりは便利だけど、たぶん本音はもう一段下にある。"}]},
+    {name:"どうしてもらえると嬉しい？", opts:[
+      {t:"忙しいときは、ひとこと知らせてもらえると嬉しい。", ok:1},
+      {t:"ちゃんとしてほしい。", why:"「ちゃんと」は、人によって中身がばらばら。相手ができる行動にしてみて。"},
+      {t:"もっと大事にしてよ。", why:"気持ちはわかる。でも、明日から何をすればいいかが相手に見えない。"}]}
+   ]},
+  {title:"会う予定のこと",
+   before:"最近全然会ってくれない。私に飽きたの？",
+   slots:[
+    {name:"何があった？", opts:[
+      {t:"今月は会えたのが1回で、", ok:1},
+      {t:"最近全然会ってくれなくて、", why:"「全然」は少し盛ってるかも。数えられる言い方があるはず。"},
+      {t:"私に飽きたみたいで、", why:"それは仮説。しかもいちばん自分が傷つくやつ。"}]},
+    {name:"どう感じた？", opts:[
+      {t:"寂しかった。", ok:1},
+      {t:"勝手だなと思った。", why:"それは相手への評価。主語を「私」に戻してみて。"},
+      {t:"どうせ私なんて、と思った。", why:"それは自分への判決。感じたことは、もっと素朴なはず。"}]},
+    {name:"どうしてもらえると嬉しい？", opts:[
+      {t:"来月、会える日を一緒に考えられたら嬉しいな。", ok:1},
+      {t:"もっと会ってよ。", why:"「もっと」は何回？ 相手が動ける形にすると話が進む。"},
+      {t:"言わなくてもわかってほしい。", why:"それができる人は、だいたい物語の中にいる。"}]}
+   ]}
+];
+var HINT=[
+  {q:"本当は連休に会いたかった。でも、まだ何も言っていない。相手に見えているのは、どれ？",
+   opts:[
+    {t:"連休の予定について、特に話が出ていない", ok:1, say:"そう。相手の画面に映っているのは、それだけ。心の中はこっちからしか見えない。"},
+    {t:"会いたがっていること", say:"残念ながら、そこまでは映ってない。あなたの中でははっきりしていても。"},
+    {t:"待たされて、少し怒っていること", say:"それも内側の話。黙っていると、相手には「特に何もない」に見える。"}]},
+  {q:"いきなり大きな話は重たい。今のあなたが、いちばん口に出しやすいのは？",
+   free:true,
+   opts:[
+    {t:"好み：「私、こういうお店が好きなんだよね」", say:"いい入口。好きなものの話は、いちばん軽い自己紹介だから。"},
+    {t:"今の気持ち：「今週は少し疲れているんだ」", say:"それで十分。近況をひとつ渡すだけで、相手は判断材料を持てる。"},
+    {t:"大切な話：「これからのことを、一度ゆっくり話したい」", say:"そこから行けるなら頼もしい。「今話しても大丈夫？」を前に置くと、相手も構えずにすむ。"}]},
+  {q:"連休のこと。察してもらえるか試す代わりに、渡すならどれ？",
+   opts:[
+    {t:"本当は連休に会えたら嬉しいと思っていたんだ。どこか空いている日はある？", ok:1, say:"希望と質問がセット。相手は、答えるだけでいい。"},
+    {t:"別に。好きにすれば", say:"これはテスト問題を出している状態。しかも相手は、試験があることを知らない。"},
+    {t:"（何も言わず、連絡が来るのを待つ）", say:"待つのは自由。ただ、相手は何に困っているのかを知る手段がない。"}]}
+];
+var FEELS=["寂しかった","不安になった","悲しかった","モヤモヤした","ちょっと傷ついた"];
+
+/* ---------- 状態 ---------- */
+var app=document.getElementById("app");
+var S={hearts:0,max:0,step:0,i:0,first:true,slot:0,picked:[],mine:""};
+
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function coach(text){
+  return '<div class="coach pop"><div class="av">'+px(HEART)+'<span>はるま</span></div><div class="say">'+text+'</div></div>';
+}
+function head(){
+  var s='<div class="top"><div class="steps" aria-label="'+S.step+'／4">';
+  for(var k=1;k<=4;k++)s+=px(HEART,k<=S.step?"on":"");
+  s+='</div><div class="count">'+px(SPARK)+'<span>ハート '+S.hearts+'</span></div></div>';
+  return s;
+}
+function draw(html){app.innerHTML=html;window.scrollTo(0,0);}
+function on(sel,fn){var n=app.querySelectorAll(sel);for(var k=0;k<n.length;k++)n[k].addEventListener("click",fn);}
+function gain(){S.max++;if(S.first)S.hearts++;}
+
+/* ---------- タイトル ---------- */
+function title(){
+  S={hearts:0,max:0,step:0,i:0,first:true,slot:0,picked:[],mine:""};
+  draw(
+    '<div class="sky">'+px(CLOUD)+px(SPARK)+px(CLOUD)+'</div>'+
+    '<section class="box hero">'+
+      '<p class="label">恋愛コーチはるまさんが、あなたの恋を手伝う</p>'+
+      px(HEART,"big bob")+
+      '<h1 class="center">はるまさんの<br>恋の作戦会議</h1>'+
+      '<p class="sub center">モヤモヤを、ちゃんと伝わる言葉にするまで。<br>4ステップ・5分くらい。</p>'+
+    '</section>'+
+    coach("いらっしゃい。今日は責めない、黙らない、その間の道を探しにいこう。")+
+    '<button class="btn main" id="go">会議をはじめる ♡</button>'+
+    '<p class="foot">試作版</p>'
+  );
+  on("#go",function(){S.step=1;S.i=0;intro(1);});
+}
+
+/* ---------- 各ステップの入口 ---------- */
+var INTRO={
+  1:{label:"ステップ1",h:"それ、起きたこと？ それとも頭の中？",say:"既読がつかない夜は、想像力がよく働く。まずは仕分けから。カードを見て、4つのうちどれかを選んでね。",go:"仕分ける"},
+  2:{label:"ステップ2",h:"責める言葉を、伝わる言葉に組み替える",say:"言いたいことは正しい。もったいないのは包み方だけ。3つのパーツを選んで、ひとつの文にしてみよう。",go:"組み替える"},
+  3:{label:"ステップ3",h:"「察して」を、小さな言葉にする",say:"気づいてほしい、は当然の願い。ただ相手はエスパーじゃないので、少しだけ手伝ってあげよう。",go:"やってみる"},
+  4:{label:"ステップ4",h:"あなた自身の言葉をつくる",say:"ここからは本番用。今いちばん気になっていることを、同じ型に入れてみて。",go:"書いてみる"}
+};
+function intro(n){
+  var d=INTRO[n];
+  draw(head()+
+    '<section class="box stack"><p class="label">'+d.label+'</p><h2>'+d.h+'</h2></section>'+
+    coach(d.say)+
+    '<button class="btn main" id="go">'+d.go+'</button>');
+  on("#go",function(){S.i=0;[null,sortQ,buildQ,hintQ,mineQ][n]();});
+}
+
+/* ---------- ステップ1：仕分け ---------- */
+function sortQ(){
+  var q=SORT[S.i];S.first=true;
+  var b="";
+  for(var k=0;k<CATS.length;k++)b+='<button class="btn" data-c="'+CATS[k].id+'">'+CATS[k].name+'<small>'+CATS[k].note+'</small></button>';
+  draw(head()+
+    '<p class="sub">'+(S.i+1)+' ／ '+SORT.length+'</p>'+
+    '<section class="box card pop">「'+q.t+'」</section>'+
+    '<div class="grid2" id="ans">'+b+'</div>'+
+    '<div id="fb"></div>');
+  on("#ans .btn",function(e){
+    var el=e.currentTarget;if(el.classList.contains("miss")||app.querySelector("#next"))return;
+    var fb=app.querySelector("#fb");
+    if(el.getAttribute("data-c")===q.a){
+      el.classList.add("hit");gain();
+      fb.innerHTML='<div class="stack">'+coach(q.ok)+'<button class="btn main" id="next">つぎへ</button></div>';
+      app.querySelector(".count span").textContent="ハート "+S.hearts;
+      on("#next",function(){S.i++;if(S.i<SORT.length)sortQ();else sortEnd();});
+    }else{
+      S.first=false;el.classList.add("miss");el.disabled=true;
+      fb.innerHTML=coach(RETRY[q.a]);
+    }
+  });
+}
+function sortEnd(){
+  draw(head()+
+    '<section class="box stack"><p class="label">持ち帰りメモ</p>'+
+    '<ul class="memo">'+
+      '<li>'+px(HEART)+'<span>実際に起きたことを書く</span></li>'+
+      '<li>'+px(HEART)+'<span>そのとき考えたことを書く</span></li>'+
+      '<li>'+px(HEART)+'<span>その考えを裏づける情報があるか見る</span></li>'+
+      '<li>'+px(HEART)+'<span>ほかの可能性も並べてみる</span></li>'+
+    '</ul></section>'+
+    coach("解釈は事実じゃない。でも「寂しかった」は本物。そこだけは、仕分けで捨てないでね。")+
+    '<button class="btn main" id="go">ステップ2へ</button>');
+  on("#go",function(){S.step=2;intro(2);});
+}
+
+/* ---------- ステップ2：組み替え ---------- */
+function buildQ(){S.slot=0;S.picked=[];buildSlot();}
+function lineHtml(sc){
+  var s="";
+  for(var k=0;k<sc.slots.length;k++){
+    s+=S.picked[k]?esc(S.picked[k]):'<span class="gap">'+(k===S.slot?"［ ここを選ぶ ］":"［　　　］")+'</span>';
+  }
+  return s;
+}
+function buildSlot(){
+  var sc=BUILD[S.i],sl=sc.slots[S.slot];S.first=true;
+  var opts=shuffle(sl.opts),b="";
+  for(var k=0;k<opts.length;k++)b+='<button class="btn left" data-k="'+k+'">'+esc(opts[k].t)+'</button>';
+  draw(head()+
+    '<p class="sub">'+sc.title+'（'+(S.i+1)+' ／ '+BUILD.length+'）</p>'+
+    '<p class="before">もとの言い方：「'+esc(sc.before)+'」</p>'+
+    '<section class="box stack"><p class="label">組み替え中</p><p class="line">'+lineHtml(sc)+'</p></section>'+
+    '<h2>'+sl.name+'</h2>'+
+    '<div class="stack" id="ans">'+b+'</div>'+
+    '<div id="fb"></div>');
+  on("#ans .btn",function(e){
+    var el=e.currentTarget;if(el.disabled)return;
+    var o=opts[+el.getAttribute("data-k")];
+    if(o.ok){
+      gain();S.picked[S.slot]=o.t;S.slot++;
+      if(S.slot<sc.slots.length)buildSlot();else buildDone();
+    }else{
+      S.first=false;el.classList.add("miss");el.disabled=true;
+      app.querySelector("#fb").innerHTML=coach(o.why);
+    }
+  });
+}
+function buildDone(){
+  var sc=BUILD[S.i];
+  draw(head()+
+    '<p class="before">もとの言い方：「'+esc(sc.before)+'」</p>'+
+    '<section class="box stack pop"><p class="label">組み替え後</p><p class="line">「'+esc(S.picked.join(""))+'」</p></section>'+
+    coach(S.i===0
+      ?"同じ不満なのに、受け取る側の難易度がだいぶ下がった。これなら相手も、言い訳より先に返事ができる。"
+      :"「飽きたの？」には答えにくいけど、「来月いつ会える？」には答えられる。質問は、答えやすい方が強い。")+
+    '<button class="btn main" id="go">'+(S.i+1<BUILD.length?"もうひとつ":"コツを見る")+'</button>');
+  on("#go",function(){S.i++;if(S.i<BUILD.length)buildQ();else buildEnd();});
+}
+function buildEnd(){
+  draw(head()+
+    '<section class="box stack"><p class="label">持ち帰りメモ</p>'+
+    '<ul class="memo">'+
+      '<li>'+px(HEART)+'<span>「いつも」「毎回」より、「昨日」「今回」</span></li>'+
+      '<li>'+px(HEART)+'<span>相手の人格や気持ちは決めつけず、自分の気持ちを言う</span></li>'+
+      '<li>'+px(HEART)+'<span>お願いは、具体的な行動で</span></li>'+
+      '<li>'+px(HEART)+'<span>感情が強いときは少し置いて、お互い話せるタイミングで</span></li>'+
+    '</ul></section>'+
+    coach("深夜2時の長文は、だいたい朝に読み返して後悔するやつ。下書きに入れて寝るのも立派な作戦。")+
+    '<button class="btn main" id="go">ステップ3へ</button>');
+  on("#go",function(){S.step=3;intro(3);});
+}
+
+/* ---------- ステップ3：察して ---------- */
+function hintQ(){
+  var q=HINT[S.i];S.first=true;
+  var opts=q.free?q.opts:shuffle(q.opts),b="";
+  for(var k=0;k<opts.length;k++)b+='<button class="btn left" data-k="'+k+'">'+esc(opts[k].t)+'</button>';
+  draw(head()+
+    '<p class="sub">'+(S.i+1)+' ／ '+HINT.length+'</p>'+
+    '<section class="box pop"><h2>'+q.q+'</h2></section>'+
+    '<div class="stack" id="ans">'+b+'</div>'+
+    '<div id="fb"></div>');
+  on("#ans .btn",function(e){
+    var el=e.currentTarget;if(el.disabled||app.querySelector("#next"))return;
+    var o=opts[+el.getAttribute("data-k")],fb=app.querySelector("#fb");
+    if(q.free||o.ok){
+      el.classList.add("hit");
+      if(!q.free){gain();app.querySelector(".count span").textContent="ハート "+S.hearts;}
+      fb.innerHTML='<div class="stack">'+coach(o.say)+'<button class="btn main" id="next">つぎへ</button></div>';
+      on("#next",function(){S.i++;if(S.i<HINT.length)hintQ();else{S.step=4;intro(4);}});
+    }else{
+      S.first=false;el.classList.add("miss");el.disabled=true;
+      fb.innerHTML=coach(o.say);
+    }
+  });
+}
+
+/* ---------- ステップ4：自分の言葉 ---------- */
+function mineQ(){
+  var chips="";
+  for(var k=0;k<FEELS.length;k++)chips+='<button class="chip" type="button">'+FEELS[k]+'</button>';
+  draw(head()+
+    '<section class="box stack">'+
+      '<div class="field"><label for="f-when">いつ、何があった？（起きたことだけ）</label>'+
+        '<input id="f-when" type="text" autocomplete="off" placeholder="例：昨日の返信が翌日になった"></div>'+
+      '<div class="field"><label for="f-feel">どう感じた？</label>'+
+        '<input id="f-feel" type="text" autocomplete="off" placeholder="例：寂しかった">'+
+        '<div class="chips" id="chips">'+chips+'</div></div>'+
+      '<div class="field"><label for="f-ask">どうしてもらえると嬉しい？（具体的な行動で）</label>'+
+        '<input id="f-ask" type="text" autocomplete="off" placeholder="例：忙しいときはひとこと知らせて"></div>'+
+    '</section>'+
+    '<section class="box stack"><p class="label">あなたの言葉</p><p class="line" id="out"></p>'+
+      '<button class="btn" id="copy">この文をコピーする</button><p class="sub" id="copied"></p></section>'+
+    coach("送るかどうかは、あなたが決めていい。言葉にできた時点で、もう半分は片づいてる。")+
+    '<button class="btn main" id="go">会議をおわる</button>');
+  var w=document.getElementById("f-when"),f=document.getElementById("f-feel"),a=document.getElementById("f-ask"),out=document.getElementById("out");
+  function trim(v){return v.trim().replace(/[。、．.]+$/,"");}
+  function upd(){
+    var W=trim(w.value),F=trim(f.value),A=trim(a.value);
+    var has=W||F||A;
+    S.mine=has?("私は、"+(W||"〇〇")+"とき、"+(F||"〇〇")+"と感じた。"+(A||"〇〇して")+"もらえると嬉しい。"):"";
+    out.textContent=has?S.mine:"私は、〇〇のとき、〇〇と感じた。〇〇してもらえると嬉しい。";
+  }
+  [w,f,a].forEach(function(el){el.addEventListener("input",upd);});
+  on("#chips .chip",function(e){f.value=e.currentTarget.textContent;upd();});
+  on("#copy",function(){
+    var msg=document.getElementById("copied");
+    try{
+      navigator.clipboard.writeText(out.textContent).then(
+        function(){msg.textContent="コピーしたよ。";},
+        function(){msg.textContent="コピーできなかった。文を長押しして選んでね。";});
+    }catch(err){msg.textContent="コピーできなかった。文を長押しして選んでね。";}
+  });
+  upd();
+  on("#go",result);
+}
+
+/* ---------- おわり ---------- */
+function result(){
+  var rate=S.max?S.hearts/S.max:0;
+  var word=rate>=.85?"ほぼ一発で仕分けと組み替えができてた。あとは本番で、深呼吸をひとつ。"
+          :rate>=.55?"迷ったところは、ふだん頭の中で混ざりやすいところ。そこがわかっただけで収穫。"
+          :"たくさん迷ったぶん、たくさん見直せた。引っかかった選択肢、たぶん普段の口ぐせに近いはず。";
+  draw(head()+
+    '<section class="box hero">'+px(HEART,"big bob")+
+      '<h2 class="center">おつかれさま</h2>'+
+      '<p class="center">ハート '+S.hearts+' ／ '+S.max+'</p></section>'+
+    coach(word)+
+    (S.mine?'<section class="box stack"><p class="label">今日つくった、あなたの言葉</p><p>'+esc(S.mine)+'</p></section>':'')+
+    '<section class="box stack"><p class="label">今日のまとめ</p>'+
+    '<ul class="memo">'+
+      '<li>'+px(HEART)+'<span>起きたことと、頭の中の解釈は別もの。気持ちは、どちらとも別で本物。</span></li>'+
+      '<li>'+px(HEART)+'<span>「私は、〇〇のとき、〇〇と感じた。〇〇してもらえると嬉しい」</span></li>'+
+      '<li>'+px(HEART)+'<span>自分の気持ちは、相手にそのまま見えてはいない。小さな言葉から渡す。</span></li>'+
+    '</ul></section>'+
+    '<p class="sub">これは相手の返事を保証する方法ではなく、自分の気持ちを伝わりやすい形に整える練習です。</p>'+
+    '<button class="btn main" id="go">もう一度あそぶ</button>'+
+    '<p class="foot">試作版</p>');
+  S.step=4;
+  on("#go",title);
+}
+
+title();
+})();
+</script>
+</body>
+</html>
